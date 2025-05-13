@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ultimate Video Downloader</title>
+  <meta name="description" content="Download HD videos and MP3s from any website instantly. No sign up required. Adult sites supported."/>
+  <meta name="keywords" content="video downloader, download any video online, HD downloader, YouTube downloader, adult video downloader, free MP3 download, full HD video, TikTok downloader, Instagram downloader, Twitter downloader"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Ultimate Video Downloader</h1>
+    <p class="subtitle">Download HD videos or audio from any site — even adult platforms. No signup. No limits.</p>
+    <div class="card">
+      <input type="url" id="url" placeholder="Paste your video link here" required/>
+      <select id="format">
+        <option value="video">Full HD Video (MP4)</option>
+        <option value="audio">Audio Only (MP3)</option>
+      </select>
+      <button onclick="download()">Download</button>
+      <p id="status" class="status"></p>
+    </div>
+  </div>
+  <script>
+    async function download() {
+      const url = document.getElementById("url").value;
+      const format = document.getElementById("format").value;
+      const status = document.getElementById("status");
+      status.innerText = "Processing...";
+      status.style.color = "#555";
+      try {
+        const res = await fetch("/download", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url, format })
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          status.innerText = "Error: " + data.error;
+          status.style.color = "crimson";
+          return;
+        }
+        const blob = await res.blob();
+        const a = document.createElement("a");
+        a.href = window.URL.createObjectURL(blob);
+        a.download = format === "video" ? "video.mp4" : "audio.mp3";
+        a.click();
+        status.innerText = "Download started!";
+        status.style.color = "green";
+      } catch (err) {
+        status.innerText = "Unexpected error.";
+        status.style.color = "crimson";
+      }
+    }
+  </script>
+</body>
+</html>
