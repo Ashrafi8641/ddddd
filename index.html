@@ -1,52 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="styles.css">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ultimate Video Downloader</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="container">
     <h1>Ultimate Video Downloader</h1>
-    <p>Download HD videos or audio from any site — even adult platforms. No signup. No limits.</p>
-    <form id="downloadForm">
-      <input type="url" id="url" placeholder="Paste your video link here" required />
-      <select id="format">
+    <p class="subtitle">Download HD videos or audio from any site — even adult platforms. No signup. No limits.</p>
+    <form method="POST">
+      <input type="text" name="url" placeholder="Paste your video link here" required>
+      <select name="format">
         <option value="mp4">Full HD Video (MP4)</option>
         <option value="mp3">Audio Only (MP3)</option>
       </select>
       <button type="submit">Download</button>
     </form>
-    <div id="message" class="message"></div>
   </div>
-  <script>
-    document.getElementById('downloadForm').onsubmit = async e => {
-      e.preventDefault();
-      const msg = document.getElementById('message');
-      msg.textContent = 'Processing…';
-      const url = document.getElementById('url').value;
-      const format = document.getElementById('format').value;
-      const res = await fetch('/download', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({url,format})
-      });
-      if (res.ok) {
-        const blob = await res.blob();
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `video.${format}`;
-        a.click();
-        msg.textContent = 'Download started!';
-        msg.style.color = 'green';
-      } else {
-        const err = await res.json();
-        msg.textContent = err.error || 'Download failed!';
-        msg.style.color = 'crimson';
-      }
-    };
-  </script>
 </body>
 </html>
